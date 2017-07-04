@@ -1,0 +1,4 @@
+{
+  "verbose": true,
+  "ignore": ["node_modules/*", "build/*", "nodemon.json", "README.md", ".gitignore"]
+}
