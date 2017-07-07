@@ -54,7 +54,8 @@
     "test": "node scripts/test.js --env=jsdom",
     "start-dev": "nodemon --exec ./start-dev.sh",
     "start-windev": "nodemon --exec start-dev.sh",
-    "start-dev-express": "nodemon server"
+    "start-dev-express": "nodemon server",
+    "heroku-postbuild" : "node scripts/build.js"
   },
   "jest": {
     "collectCoverageFrom": [
