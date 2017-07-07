@@ -91,3 +91,5 @@ db.once('open', function() {
 		console.log('Example app listening on port ' + PORT + '!')
 	});
 });
+
+module.exports = app;
