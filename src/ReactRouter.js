@@ -5,6 +5,7 @@ import { Router, Route, Switch, BrowserRouter } from 'react-router-dom'
 
 import App from './App';
 import AppAlternate from './AppAlternate';
+import Feedback from './components/Feedback';
 
 class ReactRouter extends Component{
 
@@ -14,6 +15,7 @@ class ReactRouter extends Component{
 			<Switch>
 				<Route exact path="/" component={App} />
 				<Route path="/alternate" component={AppAlternate} />
+				<Route path="/feedback/:f_key" component={Feedback} />
 			</Switch>
 		</BrowserRouter>
 		);
