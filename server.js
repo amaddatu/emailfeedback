@@ -2,6 +2,14 @@ const express = require('express');
 const app = express();
 const router = express.Router();
 const path = require('path');
+
+const bodyParser = require("body-parser");
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.text());
+app.use(bodyParser.json({ type: "application/vnd.api+json" }));
+
 var mongoose = require('mongoose');
 mongoose.Promise = Promise;
 var PORT = process.env.PORT || 3000;
@@ -11,6 +19,8 @@ mongoose.connect(MONGODB_URI, {
 	//useMongoClient: true
 });
 var BlogPost = require('./models/blogpost');
+var Groups = require('./models/groups');
+var GroupsFeedback = require('./models/groupsfeedback');
 
 
 // // Example Routes for API etc. you can use the functions below for other routes,
@@ -36,6 +46,101 @@ var BlogPost = require('./models/blogpost');
 // api route
 app.get("/api/hello", function (req, res){
 	res.json({"hello": "world"});
+	return;
+});
+
+app.get("/api/groups/:f_key", function (req, res){
+	// create a comment 
+	console.log(req.params.f_key);
+	var q = Groups.findOne({ f_key: req.params.f_key});
+	q.exec(function(err, group){
+		console.log("done");
+		res.json(group);
+	});
+	
+	return;
+});
+
+app.post("/api/groupsfeedback", function (req, res){
+	// create a comment 
+	var feedback = req.body;
+	console.log(feedback);
+	var q = Groups.findOne({ f_key: feedback.f_key});
+	q.exec(function(err, group){
+		//console.log("done");
+		//res.json(group);
+		if(group != null){
+			console.log("found group");
+			var q2 = GroupsFeedback.findOne({ 
+				f_key: feedback.f_key
+				, user: feedback.user
+			});
+			q2.exec(function(err, fbTest){
+				if(fbTest === null){
+					var fb = new GroupsFeedback({
+						f_key: feedback.f_key
+						, name: feedback.name
+						, email: feedback.email
+						, effective_team: feedback.effective_team
+						, commentary: feedback.commentary
+						, user: feedback.user
+					});
+					fb.save(function(error, fb){
+						console.log("saved feedback");
+						res.json(fb);
+					});
+				}
+				else{
+					console.log("found feedback");
+					res.json(fbTest);
+				}
+			});
+			
+		}
+		else{
+			console.log("did not find group");
+			res.json({error: "error: did not find group"});
+		}
+		
+	});
+	
+	return;
+});
+
+app.get("/api/groupsfeedback/:f_key/:user", function (req, res){
+	// create a comment 
+	var user = req.params.user;
+	var f_key = req.params.f_key;
+	console.log(user);
+	var q = Groups.findOne({ f_key: f_key});
+	q.exec(function(err, group){
+		//console.log("done");
+		//res.json(group);
+		if(group != null){
+			console.log("found group");
+			var q2 = GroupsFeedback.findOne({ 
+				f_key: f_key
+				, user: user
+			});
+			q2.exec(function(err, fbTest){
+				if(fbTest === null){
+					console.log("did not find feedback")
+					res.json({error: "error: did not find feedback"});
+				}
+				else{
+					console.log("found feedback");
+					res.json(fbTest);
+				}
+			});
+			
+		}
+		else{
+			console.log("did not find group");
+			res.json({error: "error: did not find group"});
+		}
+		
+	});
+	
 	return;
 });
 
